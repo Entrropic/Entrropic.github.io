@@ -445,7 +445,7 @@
 					console.log(error);
 					console.log('text of scores: '+scores);
 					console.log('using empty object.');
-					document.cookie = ";expires=Thu, 01 Jan 1970 00:00:00 GMT";
+					document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
 					createCustomAlert('Error', 'It seems you have no scores higher than 0, or nothing was saved.', 'Close', false);
 				 }
 		 }
@@ -984,7 +984,7 @@
 				 catch (error) {
 					console.log(error);
 					console.log('using empty object.')
-					document.cookie = ";expires=Thu, 01 Jan 1970 00:00:00 GMT";
+					document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
 				 }
 				}
 				if ("level "+levelid in score_table)
