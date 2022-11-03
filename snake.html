@@ -435,8 +435,8 @@
 			final_score_string += ' '+key+':\n';
 			let sorted_scores = score_table[key];
 			sorted_scores.sort(function (a,b) {return parseInt(a) > parseInt(b);});
-			for (const i in sorted_scores)
-				final_score_string += '  '+i+'\n';
+			for (let i = 0; i < sorted_scores.length; i++)
+				final_score_string += '  '+sorted_scores[i]+',\n';
 		  }
 		  //scores = scores.substring('score='.length, scores.length).split('|').join(', ');
 		  createCustomAlert('Highscores', final_score_string, 'Close', false);
