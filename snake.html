@@ -293,6 +293,8 @@
 
 			 if (this.behaviour == 3)
 			 {
+			  if (this.lifespan % 2 != 0 && this.cur_phase != 'chase_player') //only move each turn when chasing player
+			    return;	
 			  //calculate available moves
 			  let avail_moves = [];
 
