@@ -420,14 +420,33 @@
 		{
 		 btnclick.play();
 		 scores = document.cookie;
+		 console.log(scores);
 		 if (scores == '')
 		 {
 		  createCustomAlert('Error', 'It seems you have no scores higher than 0, or nothing was saved.', 'Close', false);
 		 }
 		 else
 		 {
-		  scores = scores.substring('score='.length, scores.length).split('|').join(', ');
-		  createCustomAlert('Highscores', 'Scores of your runs are: '+scores, 'Close', false);
+		  let score_table = {};
+		  try {
+		   score_table = JSON.parse(scores);
+		   let final_score_string = 'Your highscores: \n';
+		   for (const key in score_table) {
+			final_score_string += ' '+key+':\n';
+			let sorted_scores = score_table[key];
+			sorted_scores.sort(function (a,b) {return parseInt(a) > parseInt(b);});
+			for (const i in sorted_scores)
+				final_score_string += '  '+i+'\n';
+		  }
+		  //scores = scores.substring('score='.length, scores.length).split('|').join(', ');
+		  createCustomAlert('Highscores', final_score_string, 'Close', false);
+		  }
+			catch (error) {
+					console.log(error);
+					console.log('text of scores: '+scores);
+					console.log('using empty object.');
+					createCustomAlert('Error', 'It seems you have no scores higher than 0, or nothing was saved.', 'Close', false);
+				 }
 		 }
 		}
 		
@@ -953,10 +972,26 @@
 		   {let fail = new Audio(sounddir+'/fail.wav');
 		    if (score > 0)
 			{
-				var previous = document.cookie;
+				let previous = document.cookie;
+				console.log(previous);
+				let score_table = {};
 				if (previous != '')
-					previous = previous.substring('score='.length, previous.length)+'|';
-				document.cookie = 'score='+previous+score+';expires=Tue, 19 Jan 2038 03:14:07 GMT';
+				{
+				 try {
+			     score_table = JSON.parse(previous);
+				 }
+				 catch (error) {
+					console.log(error);
+					console.log('using empty object.')
+				 }
+				}
+				if ("level "+levelid in score_table)
+                 score_table["level "+levelid].push(score);
+				else
+				  score_table["level "+levelid] = [score];
+				//if (previous != '')
+				//	previous = previous.substring('score='.length, previous.length)+'|';
+				document.cookie = JSON.stringify(score_table)+';expires=Tue, 19 Jan 2038 03:14:07 GMT';
 				var dedtext = 'You tried so hard and got so far, but in the end your final score is: ' + score;
 			}
 			else
