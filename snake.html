@@ -36,8 +36,12 @@
 				</div>
 				</li>
 				<li class="btn_list">
-				<button id="backlevelselect" class="btn" onclick="BackToMenu()" style="position: absolute; top: 100%; left: 18%; margin-top: 50px; margin-left: -350px; width: 500px;">Back</button>
+				<button id="backlevelselect" class="btn" onclick="BackToMenu('level_select_btns', 'translate(400%, -50%)')" style="position: absolute; top: 100%; left: 18%; margin-top: 50px; margin-left: -350px; width: 500px;">Back</button>
 				</li>
+			</ul>
+
+			<ul class="score_table" id="score_table">
+
 			</ul>
 		</div>
 		
@@ -399,11 +403,11 @@
 		 return;
 		}
 		
-		function BackToMenu()
+		function BackToMenu(context, transformation) //context = name of element, transformation, its transform
 		{
 		 btnclick.play();
 		 document.getElementById('main_menu_btns').style.transform = 'translateX(0%)';
-		 document.getElementById('level_select_btns').style.transform = 'translate(400%, -50%)';
+		 document.getElementById(context).style.transform = transformation;//'translate(400%, -50%)';
 		 //transition of menu buttons back on screen
 		 return;
 		}
@@ -422,14 +426,71 @@
 		 scores = document.cookie;
 		 console.log(scores);
 		 if (scores == '')
-		 {
 		  createCustomAlert('Error', 'It seems you have no scores higher than 0, or nothing was saved.', 'Close', false);
-		 }
 		 else
 		 {
 		  let score_table = {};
 		  try {
 		   score_table = JSON.parse(scores);
+		  }
+		  catch (error) {
+				console.log(error);
+				console.log('text of scores: '+scores);
+				console.log('clearing score cookies. Next time scores should work.');
+				document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+				createCustomAlert('Error', 'It seems you have no scores higher than 0, or nothing was saved.', 'Close', false);
+				return
+			}
+
+		   document.getElementById('main_menu_btns').style.transform = 'translateX(-400%)';
+		   document.getElementById('score_table').style.transform = 'translateY(-200%)';
+		   //"top: 50%; text-align: center; color: #000; -webkit-text-fill-color: #CDC; -webkit-text-stroke: 2px; font-size: 200px; user-select: none;"
+		   let super_header = document.getElementById('score_table').appendChild(document.createElement('h1'));
+		   super_header.className = 'scoreText';
+		   super_header.style.left = '40%';
+		   super_header.style['margin-left'] = -10*('Your highscores: '.length)/2+'px';
+		   super_header.style.top = '-250%';
+		   super_header.style['font-size'] = '100px';
+		   super_header.innerHTML = 'Your highscores: ';
+		   let counter = 0;
+		   for (const key in score_table) {
+			let sub_table = document.createElement('div');
+			sub_table.id = key;
+			let header = sub_table.appendChild(document.createElement('h2'));
+			header.innerHTML = key+':';
+			header.className = 'scoreText';
+			header.style.left = '40%';
+			header.style['margin-left'] = -10*('Level  :'.length)/2+'px';
+			header.style.top = '-150%';
+			header.style.left = 15+counter*30+'%';
+			//header.style.top = -250+counter*50+'%';
+			header.style['font-size'] = '60px';
+			let sorted_scores = score_table[key];
+			sorted_scores.sort(function (a,b) {return parseInt(a) < parseInt(b);});
+			sorted_scores = sorted_scores.slice(0, Math.min(8, sorted_scores.length));
+			for (let score_unit = 0; score_unit < sorted_scores.length; score_unit++) {
+				let scoreinfo = sub_table.appendChild(document.createElement('p'));
+				scoreinfo.className = 'scoreText';
+				scoreinfo.innerHTML = sorted_scores[score_unit];
+				scoreinfo.style.top = -100+score_unit*30+'%';
+				scoreinfo.style.left = 15+counter*30+'%';
+				scoreinfo.style['font-size'] = '50px';
+			}
+			document.getElementById('score_table').appendChild(sub_table);
+			counter += 1;
+		}
+
+			let backbtn = document.createElement('button');
+			backbtn.className='btn';
+			backbtn.id='backscoretable';
+			backbtn.innerHTML='Back';
+			//backbtn.style.position = 'absolute';
+			backbtn.style.left = '15%';
+			backbtn.style.top = '300px';
+			document.getElementById('score_table').appendChild(backbtn);
+			backbtn.onclick = function() {BackToMenu('score_table', 'translateY(800%)'); setTimeout(function(){for (const key in score_table) document.getElementById(key).remove(); document.getElementById('backscoretable').remove(); super_header.remove();}, 1500);};
+			//<button id="backlevelselect" class="btn" onclick="BackToMenu()" style="position: absolute; top: 100%; left: 18%; margin-top: 50px; margin-left: -350px; width: 500px;">Back</button>
+/*
 		   let final_score_string = 'Your highscores: \n';
 		   for (const key in score_table) {
 			final_score_string += ' '+key+':\n';
@@ -439,15 +500,7 @@
 				final_score_string += '  '+sorted_scores[i]+',\n';
 		  }
 		  //scores = scores.substring('score='.length, scores.length).split('|').join(', ');
-		  createCustomAlert('Highscores', final_score_string, 'Close', false);
-		  }
-			catch (error) {
-					console.log(error);
-					console.log('text of scores: '+scores);
-					console.log('using empty object.');
-					document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
-					createCustomAlert('Error', 'It seems you have no scores higher than 0, or nothing was saved.', 'Close', false);
-				 }
+		  createCustomAlert('Highscores', final_score_string, 'Close', false);*/
 		 }
 		}
 		
@@ -464,9 +517,13 @@
 		 document.getElementById('main_menu_btns').style.transition = 'transform 3.0s ease';
 		 document.getElementById('main_menu_btns').style.transform = 'translateX(0%)';
 		 document.getElementById('level_select_btns').style.transform = 'translate(400%, -50%)';
+		 document.getElementById('score_table').style.transform = 'translateY(400%)';
+		 document.getElementById('score_table').style.transition = 'transform 3.0s ease';
 		 
 		 document.removeEventListener('keydown', InitMenu);
 		 document.removeEventListener('click', InitMenu);
+
+		 setTimeout(function() {document.getElementById('intro').style.display = 'none';}, 1500);
 		}
 		
 		function GameTransition()
@@ -1131,6 +1188,7 @@
 		text-align: center;
 		user-select: none;
 		box-shadow: 2px 1px 1px #000000;
+		border-radius: 20px;
 		width: 600px;
 		height: 120px;
 		left: 50%;
@@ -1158,6 +1216,15 @@
 		  list-style-type: none;
 		  transition: transform 3.0s ease;
 		  /*transform: translateX(-400%);*/
+		}
+
+		.scoreText {
+		   position : absolute;
+		   color : #000;
+		   text-align : center;
+		   -webkit-text-fill-color : #CDC;
+		   -webkit-text-stroke : 2px;
+		   user-select : none;
 		}
 		
 		.menu {
