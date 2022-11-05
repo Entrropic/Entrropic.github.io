@@ -466,7 +466,7 @@
 			//header.style.top = -250+counter*50+'%';
 			header.style['font-size'] = '60px';
 			let sorted_scores = score_table[key];
-			sorted_scores.sort(function (a,b) {return parseInt(a) < parseInt(b);});
+			sorted_scores.sort(function (a,b) {return parseInt(a) < parseInt(b) ? 1 : -1;});
 			sorted_scores = sorted_scores.slice(0, Math.min(8, sorted_scores.length));
 			for (let score_unit = 0; score_unit < sorted_scores.length; score_unit++) {
 				let scoreinfo = sub_table.appendChild(document.createElement('p'));
