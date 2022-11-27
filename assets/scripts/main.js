@@ -1,3 +1,14 @@
+        //references so functions from this file work, also menu display
+        window.onload = () => {
+            document.getElementById("menu").style.display = 'block';
+            window.GameTransition = GameTransition;
+            window.LevelSelect = LevelSelect;
+            window.Highscores = Highscores;
+            window.Rules = Rules;
+            window.ChangeLevel = ChangeLevel;
+            window.BackToMenu = BackToMenu;
+        }
+        
         var assetsdir = 'assets';
 		var sounddir = assetsdir+'/sounds';
 		var spritedir = assetsdir+'/sprites';
@@ -68,7 +79,7 @@
 		function Highscores()
 		{
 		 btnclick.play();
-		 scores = document.cookie;
+		 let scores = document.cookie;
 		 console.log(scores);
 		 if (scores == '')
 		  createCustomAlert('Error', 'It seems you have no scores higher than 0, or nothing was saved.', 'Close', false);
@@ -256,7 +267,7 @@
 				img.src = src;
 			});
 
-		 load_list = [spritedir+'/snakesprite.png',
+		 const load_list = [spritedir+'/snakesprite.png',
 		 			  spritedir+'/enemy'+levelid+'.png'];
 		
 		 Promise.all(load_list.map(loadImage)).then(imgs => {
@@ -731,15 +742,15 @@
 		}
 		
 		  function createCustomAlert(title, txt, btntxt, isGame) {
-		  d = document;
+		  let d = document;
 
 		  if(d.getElementById("modalContainer")) return;
 
-		  mObj = d.getElementsByTagName("body")[0].appendChild(d.createElement("div"));
+		  let mObj = d.getElementsByTagName("body")[0].appendChild(d.createElement("div"));
 		  mObj.id = "modalContainer";
 		  mObj.style.height = d.documentElement.scrollHeight + "px";
 		  
-		  alertObj = mObj.appendChild(d.createElement("div"));
+		  let alertObj = mObj.appendChild(d.createElement("div"));
 		  alertObj.id = "alertBox";
 		  if(d.all && !window.opera) alertObj.style.top = '50%';//document.documentElement.scrollTop + "px";
 		  alertObj.style.left = '50%';//(d.documentElement.scrollWidth - alertObj.offsetWidth)/2 + "px";
@@ -748,14 +759,14 @@
 		  //alertObj.style.margin-left = -alertObj.offsetHeight)/2;
 		  alertObj.style.visiblity="visible";
 
-		  h1 = alertObj.appendChild(d.createElement("h1"));
+		  let h1 = alertObj.appendChild(d.createElement("h1"));
 		  h1.appendChild(d.createTextNode(title));
 
-		  msg = alertObj.appendChild(d.createElement("p"));
+		  let msg = alertObj.appendChild(d.createElement("p"));
 		  //msg.appendChild(d.createTextNode(txt));
 		  msg.innerHTML = txt;
 
-		  btn = alertObj.appendChild(d.createElement("a"));
+		  let btn = alertObj.appendChild(d.createElement("a"));
 		  btn.id = "closeBtn";
 		  btn.appendChild(d.createTextNode(btntxt));
 		  btn.href = "#";
