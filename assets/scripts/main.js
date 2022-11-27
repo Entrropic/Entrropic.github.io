@@ -1,9 +1,10 @@
-		var assetsdir = 'assets';
+        var assetsdir = 'assets';
 		var sounddir = assetsdir+'/sounds';
 		var spritedir = assetsdir+'/sprites';
 		var scriptdir = assetsdir+'/scripts';
 
-		import Enemy from scriptdir+'/EnemyClass.js';
+		//import Enemy from scriptdir+'/EnemyClass.js';
+        import Enemy from 'assets/scripts/EnemyClass.js';
 		
 		var btnclick = new Audio(sounddir+'/btn_click.mp3'); //I reuse it a lot
 		
