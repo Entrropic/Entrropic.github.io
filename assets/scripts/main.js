@@ -1,7 +1,7 @@
 		var assetsdir = 'assets';
 		var sounddir = assetsdir+'/sounds';
 		var spritedir = assetsdir+'/sprites';
-		var scriptdir = assetdir+'/scripts';
+		var scriptdir = assetsdir+'/scripts';
 
 		import Enemy from scriptdir+'/EnemyClass.js';
 		
