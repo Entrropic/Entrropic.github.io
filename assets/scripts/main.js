@@ -4,7 +4,7 @@
 		//var scriptdir = assetsdir+'/scripts';
 
 		//import Enemy from scriptdir+'/EnemyClass.js';
-        import Enemy from './assets/scripts/EnemyClass.js';
+        import Enemy from './EnemyClass.js';
 		
 		var btnclick = new Audio(sounddir+'/btn_click.mp3'); //I reuse it a lot
 		
