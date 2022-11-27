@@ -8,35 +8,35 @@
 		<div id="intro" style="position: absolute; top: 10%; left: 0%; transform: translateY(0%);"><h1 style="top: 50%; text-align: center; color: #000; -webkit-text-fill-color: #CDC; -webkit-text-stroke: 2px; font-size: 200px; user-select: none;">Welcome to Snek! Press any key</h1></div>
 		<div class="menu" id="menu">
 			<ul class="btns" id="main_menu_btns">
-				<li class="btn_list"><button id="start" class="btn" onclick="GameTransition()">Start game</button></li>
-				<li class="btn_list"><button id="select_level" class="btn" onclick="LevelSelect()">Level select</button></li>
-				<li class="btn_list"><button id="high_score" class="btn" onclick="Highscores();">Highscores</button></li>
-				<li class="btn_list"><button id="rules" class="btn" onclick="Rules();">Rules and controls</button></li>
+				<li class="btn_list"><button id="start" class="btn" onclick="window.GameTransition()">Start game</button></li>
+				<li class="btn_list"><button id="select_level" class="btn" onclick="window.LevelSelect()">Level select</button></li>
+				<li class="btn_list"><button id="high_score" class="btn" onclick="window.Highscores();">Highscores</button></li>
+				<li class="btn_list"><button id="rules" class="btn" onclick="window.Rules();">Rules and controls</button></li>
 			</ul>
 			<ul class="btns" id="level_select_btns">
 				<li class="btn_list">
 				<div style="position: absolute; top: 20%; left: 18%; margin-top: -300px;">
 					<img src="assets/levelimages/level1.png" width="600" height="300" style="position: absolute; top: 0%; left: 50%; margin-top: -150px; margin-left: -350px;">
 					<br/>
-					<button id="level1" class="btn" onclick="ChangeLevel(this.id)" style="position: absolute; top: 0%; left: 50%; margin-top: 150px; margin-left: -350px; width: 600px;">Level 1</button>
+					<button id="level1" class="btn" onclick="window.ChangeLevel(this.id)" style="position: absolute; top: 0%; left: 50%; margin-top: 150px; margin-left: -350px; width: 600px;">Level 1</button>
 				</div>
 				</li>
 				<li class="btn_list">
 				<div style="position: absolute; top: 20%; left: 52%; margin-top: -300px;">
 					<img src="assets/levelimages/level2.png" width="600" height="300" style="position: absolute; top: 0%; left: 50%; margin-top: -150px; margin-left: -350px;">
 					<br/>
-					<button id="level2" class="btn" onclick="ChangeLevel(this.id)" style="position: absolute; top: 0%; left: 50%; margin-top: 150px; margin-left: -350px; width: 600px;">Level 2</button>
+					<button id="level2" class="btn" onclick="window.ChangeLevel(this.id)" style="position: absolute; top: 0%; left: 50%; margin-top: 150px; margin-left: -350px; width: 600px;">Level 2</button>
 				</div>
 				</li>
 				<li class="btn_list">
 				<div style="position: absolute; top: 20%; left: 86%; margin-top: -300px;">
 					<img src="assets/levelimages/level3.png" width="600" height="300" style="position: absolute; top: 0%; left: 50%; margin-top: -150px; margin-left: -350px;">
 					<br/>
-					<button id="level3" class="btn" onclick="ChangeLevel(this.id)" style="position: absolute; top: 0%; left: 50%; margin-top: 150px; margin-left: -350px; width: 600px;">Level 3</button>
+					<button id="level3" class="btn" onclick="window.ChangeLevel(this.id)" style="position: absolute; top: 0%; left: 50%; margin-top: 150px; margin-left: -350px; width: 600px;">Level 3</button>
 				</div>
 				</li>
 				<li class="btn_list">
-				<button id="backlevelselect" class="btn" onclick="BackToMenu('level_select_btns', 'translate(400%, -50%)')" style="position: absolute; top: 100%; left: 18%; margin-top: 50px; margin-left: -350px; width: 500px;">Back</button>
+				<button id="backlevelselect" class="btn" onclick="window.BackToMenu('level_select_btns', 'translate(400%, -50%)')" style="position: absolute; top: 100%; left: 18%; margin-top: 50px; margin-left: -350px; width: 500px;">Back</button>
 				</li>
 			</ul>
 
