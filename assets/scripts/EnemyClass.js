@@ -1,3 +1,8 @@
+import Assets from './assetmapping.js';
+
+let getdirs = Assets();
+var sounddir = getdirs[1];
+
 export default class Enemy {
     constructor(x,y,lifespan,behaviourid) {
      this.x = x;
@@ -66,6 +71,7 @@ export default class Enemy {
 
     behaviourPattern(ctx, img, board_info_array, px, py)
     {
+     let behave = -1;    //maybe reuse later
      if (this.behaviour == 1)
         return; //no behaviour, apple just stays put
      if (this.behaviour == 2)
@@ -197,7 +203,7 @@ export default class Enemy {
      }		
 
      if (this.behaviour == 3)
-     {
+     { 
       if (this.lifespan % 2 != 0 && this.cur_phase != 'chase_player') //only move each turn when chasing player
         return;	
       //calculate available moves
@@ -281,16 +287,16 @@ export default class Enemy {
          piggy_eat.volume = 0.6;
          piggy_eat.play();
          ctx.clearRect(selected_move[0]*50, selected_move[1]*50, 50, 50);
-         apple_counter = 40;
+         behave = 37;
          this.lifespan += 60;
         }
         ctx.drawImage(img, redraw[0], redraw[1], 50, 50, selected_move[0]*50, selected_move[1]*50, 50, 50);
         board_info_array[this.y][this.x] = 0;
         board_info_array[selected_move[1]][selected_move[0]] = 3;
-          this.x = selected_move[0];
+        this.x = selected_move[0];
         this.y = selected_move[1];
       }
-      return; 
+      return behave; 
      }
     }
 

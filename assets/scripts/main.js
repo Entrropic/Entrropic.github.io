@@ -8,14 +8,14 @@
             window.ChangeLevel = ChangeLevel;
             window.BackToMenu = BackToMenu;
         }
-        
-        var assetsdir = 'assets';
-		var sounddir = assetsdir+'/sounds';
-		var spritedir = assetsdir+'/sprites';
-		//var scriptdir = assetsdir+'/scripts';
 
-		//import Enemy from scriptdir+'/EnemyClass.js';
+        import Assets from './assetmapping.js';
         import Enemy from './EnemyClass.js';
+
+        let getdirs = Assets();
+        
+		var sounddir = getdirs[1];
+		var spritedir = getdirs[2];
 		
 		var btnclick = new Audio(sounddir+'/btn_click.mp3'); //I reuse it a lot
 		
@@ -485,7 +485,9 @@
 			}
 		  else
 		    {
-             opp_list[i].behaviourPattern(ctx, imgs[1], board_info_array, new_x, new_y); //used for redrawing
+             let behave = opp_list[i].behaviourPattern(ctx, imgs[1], board_info_array, new_x, new_y); //used for redrawing
+             if (behave == 37) //pig eats apple
+                apple_counter = 40;
 		    }
 		 }
 		 
