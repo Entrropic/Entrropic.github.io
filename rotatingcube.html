@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Rubics cube</title>
+		<style>
+			body { margin: 0; }
+		</style>
+	</head>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.146.0/three.module.js"
+          }
+        }
+      </script>
+	<body>
+    <button id="rotate_right" style="width:250px; height:150px; font-size: 50px; font-style: bold;">Randomly rotate</button>
+		<script type="module">
+
+              function rotate(){
+                let i = Math.floor(Math.random()*9);
+                for (let r = 0; r < 4000; r++)
+                  setTimeout(function() {requestAnimationFrame(function () {do_rotation(i);});}, 100);
+              }
+
+              function do_rotation(i) {
+                const myAxis = new THREE.Vector3((i<3), (i>=3 && i <= 5), (i > 5));
+                for (let j = 0; j < cubes.length; j++) {
+                  if (i < 3){
+                    if (cubes[j].position.x == 0) {
+                        //cubes[j].rotation.x+=Math.PI/160000;
+                        cubes[j].rotateOnWorldAxis(myAxis, Math.PI/8000);
+                    }
+                  }
+                  else if (i > 5) {
+                    if (cubes[j].position.z == 0) {
+                        //cubes[j].rotation.x+=Math.PI/160000;
+                        cubes[j].rotateOnWorldAxis(myAxis, Math.PI/8000);
+                    }
+
+                  }
+                  else {
+                    if (cubes[j].position.y == 0) {
+                        //cubes[j].rotation.x+=Math.PI/160000;
+                        cubes[j].rotateOnWorldAxis(myAxis, Math.PI/8000);
+                    }
+
+                  }
+                }
+
+              }
+            
+            document.getElementById('rotate_right').addEventListener('click', rotate);
+    
+            import * as THREE from 'three';
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+            const renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+            var cubes = [];
+
+            const geometry = new THREE.BoxGeometry( 1, 1, 1 ).toNonIndexed();
+            geometry.translate( 0, 0, 0);
+            //let side_colors = [];
+            let color_mapping = [0xaa0000, 0x00aa00, 0x0000aa, 0xaaaa00, 0xaa00aa, 0x00aaaa];
+
+            let material = new THREE.MeshBasicMaterial( {vertexColors: true} );
+
+            const linemat = new THREE.LineBasicMaterial( { color: 0x111111, linewidth: 5 } );
+            const edge = new THREE.EdgesGeometry(geometry);
+
+            const positionAttribute = geometry.getAttribute( 'position' );
+
+            const color = new THREE.Color();
+            let colors = [];
+
+            for ( let i = 0; i < positionAttribute.count; i += 6 ) {
+        
+                    color.set(color_mapping[Math.round(i/6)]);
+                    
+                    // define the same color for each vertex of a triangle
+                    
+                    for (let j = 0; j < 6; j ++)
+                      colors.push( color.r, color.g, color.b );
+                
+            }
+
+            geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
+
+            //pivots for rotation of individual segments
+            var pivots = [];
+            for (let i = 0; i < 9; i++) {
+              pivots.push(new THREE.Group()); //0-2 for x, 3-5 for y, 6-8 for z
+              scene.add(pivots[i]);
+            }
+
+
+            for (let i = 0; i < 27; i++) {
+              const cube = new THREE.Mesh( geometry, material );
+              const lines = new THREE.LineSegments(edge, linemat);
+              cube.add(lines);
+              const x = Math.floor(i/9);
+              const y = Math.floor((i-x*9)/3);
+              const z = Math.floor(i-x*9-y*3);
+              //console.log(x,y,z);
+              cube.translateX(x-1);
+              cube.translateY(y-1);
+              cube.translateZ(z-1);
+              cubes.push(cube);
+              scene.add(cube);
+              //pivots[x].add(cubes[i-1]); not working wtf?
+              //pivots[3+y].add(cubes[i]);
+              //pivots[6+z].add(cubes[i]);
+            }
+
+            cubes.map((cube) => {
+              scene.add(cube);
+              //console.log(cube.position.x);
+              //console.log(pivots[cube.position.x+1]);
+              //pivots[cube.position.x+1].add(cube);
+              //pivots[cube.position.y+4].add(cube);
+              //pivots[cube.position.z+7].add(cube);
+            });
+
+            camera.position.z = 10;
+            camera.rotation.x+=0.5;
+            camera.position.x -= 4;
+            camera.position.y -= 5;
+
+            //controls.update() must be called after any manual changes to the camera's transform
+            //camera.position.set( 0, 20, 100 );
+
+            var global_pivot = new THREE.Group(); //pivot as a center point for rotating cubes. I'll need a lot of pivots for each block of cubes.
+            scene.add( global_pivot );
+            cubes.map((cube) => {global_pivot.add(cube);});
+            //console.log(global_pivot);
+            //pivot.add( mesh );
+            //pivots[0].add(cubes[0]);
+
+            renderer.render( scene, camera );
+
+            function animate() {
+                requestAnimationFrame( animate );
+                renderer.render( scene, camera );
+                global_pivot.rotation.y += 0.01;
+                global_pivot.rotation.x += 0.01;
+                global_pivot.rotation.z += 0.01;
+                //rotate();
+
+                //cubes.map((cube) => {cube.rotation.y += 0.01;});
+                //cube.rotation.z += 0.01;
+            }
+            animate();
+        </script>
+	</body>
+</html>
