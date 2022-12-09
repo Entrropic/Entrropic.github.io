@@ -16,34 +16,46 @@
       </script>
 	<body>
     <button id="rotate_right" style="width:250px; height:150px; font-size: 50px; font-style: bold;">Randomly rotate</button>
+    <button id="solve" style="width:250px; height:150px; font-size: 50px; font-style: bold; position: absolute;">Solve</button>
 		<script type="module">
 
               function rotate(){
                 let i = Math.floor(Math.random()*9);
+                backwards.push(i);
                 for (let r = 0; r < 4000; r++)
-                  setTimeout(function() {requestAnimationFrame(function () {do_rotation(i);});}, 100);
+                  setTimeout(function() {requestAnimationFrame(function () {do_rotation(i, 1);});}, 100);
               }
 
-              function do_rotation(i) {
+              function solve() {
+
+                for (let x = backwards.length-1; x >= 0; x--)
+                  {
+                    let uu = backwards[x]; 
+                    for (let r = 0; r < 4000; r++)
+                      setTimeout(function() {requestAnimationFrame(function () {do_rotation(uu, -1);});}, 100);
+                  }
+                
+                backwards = [];
+
+              }
+
+              function do_rotation(i, bw) {
                 const myAxis = new THREE.Vector3((i<3), (i>=3 && i <= 5), (i > 5));
                 for (let j = 0; j < cubes.length; j++) {
                   if (i < 3){
-                    if (cubes[j].position.x == 0) {
-                        //cubes[j].rotation.x+=Math.PI/160000;
-                        cubes[j].rotateOnWorldAxis(myAxis, Math.PI/8000);
+                    if (cubes[j].position.x == i%3-1) {
+                        cubes[j].rotateOnWorldAxis(myAxis, bw*Math.PI/8000);
                     }
                   }
                   else if (i > 5) {
-                    if (cubes[j].position.z == 0) {
-                        //cubes[j].rotation.x+=Math.PI/160000;
-                        cubes[j].rotateOnWorldAxis(myAxis, Math.PI/8000);
+                    if (cubes[j].position.z == i%3-1) {
+                        cubes[j].rotateOnWorldAxis(myAxis, bw*Math.PI/8000);
                     }
 
                   }
                   else {
-                    if (cubes[j].position.y == 0) {
-                        //cubes[j].rotation.x+=Math.PI/160000;
-                        cubes[j].rotateOnWorldAxis(myAxis, Math.PI/8000);
+                    if (cubes[j].position.y == i%3-1) {
+                        cubes[j].rotateOnWorldAxis(myAxis, bw*Math.PI/8000);
                     }
 
                   }
@@ -52,6 +64,7 @@
               }
             
             document.getElementById('rotate_right').addEventListener('click', rotate);
+            document.getElementById('solve').addEventListener('click', solve);
     
             import * as THREE from 'three';
             const scene = new THREE.Scene();
@@ -62,6 +75,8 @@
             document.body.appendChild( renderer.domElement );
 
             var cubes = [];
+
+            var backwards = []; //logs "i" action. used for "solve" command to do backwards rotation from end to beginning.
 
             const geometry = new THREE.BoxGeometry( 1, 1, 1 ).toNonIndexed();
             geometry.translate( 0, 0, 0);
