@@ -14,7 +14,7 @@
           }
         }
       </script>
-	<body>
+	<body class="body">
     <button id="rotate_right" style="width:250px; height:150px; font-size: 50px; font-style: bold;">Randomly rotate</button>
     <button id="solve" title="temporary unavailable" style="width:250px; height:150px; font-size: 50px; font-style: bold; position: absolute;" disabled>Solve</button>
 		<script type="module">
@@ -235,5 +235,11 @@
             }
             animate();
         </script>
+        <style>
+          .body {
+            background: linear-gradient(#f3aea0, #b7adec);
+            overflow: hidden;
+          }
+        </style>
 	</body>
 </html>
