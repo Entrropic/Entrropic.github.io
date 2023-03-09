@@ -16,59 +16,82 @@
       </script>
 	<body class="body">
     <button id="rotate_right" style="width:250px; height:150px; font-size: 50px; font-style: bold;">Randomly rotate</button>
-    <button id="solve" title="temporary unavailable" style="width:250px; height:150px; font-size: 50px; font-style: bold; position: absolute;" disabled>Solve</button>
+    <button id="solve" title="temporary unavailable" style="width:250px; height:150px; font-size: 50px; font-style: bold; position: absolute;">Solve</button>
 		<script type="module">
 
-              function rotate(a, i= -1) { //-1 is default value
-                if (rotation)
-                  return;
-                rotation = true;
-                let bw = 1;
-                console.log(9-i);
-                if (i == -1) {
-                  i = Math.floor(Math.random()*9);
-                  backwards.push(i);
-                }
-                else bw = -1;
-                const temp = new THREE.Group();
-                scene.add(temp);
-                global_pivot.add(temp);
-                
-                for (let j = 0; j < cubes.length; j++) {
-                  if (i < 3){
-                    if (cubes[j].position.x == i%3-1) {
-                      console.log(j);
-                      temp.add(cubes[j]);
-                    }
-                  }
-                  else if (i > 5) {
-                    if (cubes[j].position.z == i%3-1) {
-                      console.log(j);
-                      temp.add(cubes[j]);
-                    }
-                  }
-                  else {
-                    if (cubes[j].position.y == i%3-1) {
-                      console.log(j);
-                      temp.add(cubes[j]);
-                    }
-                  }
-                }
+            import * as THREE from 'three';
 
-                const myAxis = new THREE.Vector3((i<3), (i>=3 && i <= 5), (i > 5));
-                let counter = 0;
-                do_rotation(i, bw, temp, myAxis);
-                setTimeout(function () {
-                  //console.log(upd);
-                  console.log('next');
-                  const temprot = new THREE.Euler();
-                  global_pivot.getWorldQuaternion(temprot);
-                  global_pivot.rotation.x = 0;
-                  global_pivot.rotation.y = 0;
-                  global_pivot.rotation.z = 0;
-                  temp.children.map((cube) => 
-                    {
-                      //console.log(temp.children.length);
+            function MainRubik() {  //parametrize later
+
+              function solve() {
+                console.log('doing this?');
+                is_solving = true;
+                cur_direction = -1;
+              }
+
+              function going_backwards() {
+                if (backwards.length == 0) {
+                  is_solving = false;
+                  rotation_group = -1;
+                  cur_direction = 1;
+                  return;
+                }
+                rotation_group = backwards[backwards.length-1];
+                backwards.splice(backwards.length-1, 1);
+                is_rotating = true;
+                cur_axis = axis_mapping[Math.floor(rotation_group/3)];
+                cubes.map((cube) => {
+                  if (cube.position[cur_axis] == rotation_group%3-1){
+                    rotating_cubes.add(cube);
+                    console.log(cube.position[cur_axis]);}
+                })
+              }
+
+              function start_rotation() {
+                is_rotating = true;
+                rotation_group = Math.floor(Math.random()*9);
+                console.log(Math.floor(rotation_group/3));
+                backwards.push(rotation_group);
+                cur_axis = axis_mapping[Math.floor(rotation_group/3)];
+                cubes.map((cube) => {
+                  if (cube.position[cur_axis] == rotation_group%3-1){
+                    rotating_cubes.add(cube);
+                    console.log(cube.position[cur_axis]);}
+                })
+                
+              }
+
+              function rotate(cube_group, speed, direction, axis) {
+                console.log(axis);
+                count++;
+                if (direction > 0) {
+                  if (cube_group.rotation[axis] < Math.PI/2) {
+                    cube_group.rotation[axis] += (speed * direction);
+                  }
+                  else if (cube_group.rotation[axis] >= Math.PI/2) {
+                    cube_group.rotation[axis] = Math.PI/2;
+                    finalize(); //sort of done
+                  }
+               }
+               else {
+                  if (cube_group.rotation[axis] > -Math.PI/2) {
+                    cube_group.rotation[axis] += (speed * direction);
+                  }
+                  else if (cube_group.rotation[axis] <= -Math.PI/2) {
+                    cube_group.rotation[axis] = -Math.PI/2;
+                    finalize(); //sort of done
+                  }
+               }
+
+              }
+
+              function finalize() {
+                is_rotating = false;
+                if (!is_solving)
+                  rotation_group = -1;
+                const temprot = new THREE.Euler();
+                global_pivot.getWorldQuaternion(temprot); //global_pivot related stuff is not necessary since I now rotate camera but whatever.
+                cubes.map((cube) => {
                       const mew = new THREE.Vector3();
                       cube.getWorldQuaternion(cube.rotation);
                       cube.getWorldPosition(mew);
@@ -76,134 +99,92 @@
                       mew.y = Math.round(mew.y);
                       mew.z = Math.round(mew.z);
                       cube.position.set(mew.x, mew.y, mew.z);
-                      //global_pivot.add(cube);
-                      //pivots.map((cube) => {global_pivot.add(cube);});
-                    });
-                    temp.rotateOnWorldAxis(myAxis, -1*Math.PI/2);
-                    global_pivot.setRotationFromEuler(temprot);
-                    rotation = false;
-                  }, 1000);
-                //setTimeout(function() {temp.remove()}, 1000);
-
-              }
-
-              async function solve() { //needs work
-                console.log(backwards);
-
-                for (let x = backwards.length-1; x >= 0; x--)
-                  {
-                    let uu = backwards[x];
-                    rotate(uu);
-                    await new Promise(r => setTimeout(r, 700));
-                    //for (let r = 0; r < 2000; r++)
-                    //  setTimeout(function() {requestAnimationFrame(function () {do_rotation(uu, -1, temp);});}, 100);
-                  }
-                
-                backwards = [];
-
-              }
-
-              function do_rotation(i, bw, temp, myAxis) {
-                for (let r = 0, p = Promise.resolve(); r < 4000; r++)
-                    p.then(p = new Promise((resolve) => {setTimeout(() => {requestAnimationFrame(() => {temp.rotateOnWorldAxis(myAxis, bw*Math.PI/8000);});}, 100)}));
+                      global_pivot.add(cube);
+                })
+                rotating_cubes.rotation.x = 0;
+                rotating_cubes.rotation.y = 0;
+                rotating_cubes.rotation.z = 0;
+                global_pivot.setRotationFromEuler(temprot);
               }
             
-            document.getElementById('rotate_right').addEventListener('click', rotate);
+            document.getElementById('rotate_right').addEventListener('click', start_rotation);
             document.getElementById('solve').addEventListener('click', solve);
 
-            var rotation = false;
-    
-            import * as THREE from 'three';
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-
             const renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
             renderer.setSize( window.innerWidth, window.innerHeight );
             document.body.appendChild( renderer.domElement );
 
-            var cubes = [];
+            let backwards = []; //logs "i" action. used for "solve" command to do backwards rotation from end to beginning.
+            let is_rotating = false;
+            let is_solving = false;
+            let rotation_group = -1;
+            const axis_mapping = {0 : 'x', 1 : 'y', 2 : 'z'};
+            let cur_axis = -1;
+            let cur_direction = 1;
 
-            var backwards = []; //logs "i" action. used for "solve" command to do backwards rotation from end to beginning.
+            let count = 0; //debug
+            
+              function init_cubes (size = 3) {
+              let temp = [];
+              const geometry = new THREE.BoxGeometry( 1, 1, 1 ).toNonIndexed();
+              geometry.translate( 0, 0, 0);
 
-            const geometry = new THREE.BoxGeometry( 1, 1, 1 ).toNonIndexed();
-            geometry.translate( 0, 0, 0);
-            //let side_colors = [];
-            let color_mapping = [0xaa0000, 0x00aa00, 0x0000aa, 0xaaaa00, 0xaa00aa, 0x00aaaa];
+              let color_mapping = [0xaa0000, 0x00aa00, 0x0000aa, 0xaaaa00, 0xaa00aa, 0x00aaaa];
+              let material = new THREE.MeshBasicMaterial( {vertexColors: true} );
+              const linemat = new THREE.LineBasicMaterial( { color: 0x111111, linewidth: 5 } );
+              const edge = new THREE.EdgesGeometry(geometry);
+              const positionAttribute = geometry.getAttribute( 'position' );
 
-            let material = new THREE.MeshBasicMaterial( {vertexColors: true} );
+              const color = new THREE.Color();
+              let colors = [];
 
-            const linemat = new THREE.LineBasicMaterial( { color: 0x111111, linewidth: 5 } );
-            const edge = new THREE.EdgesGeometry(geometry);
+              for ( let i = 0; i < positionAttribute.count; i += 6 ) {
+          
+                      color.set(color_mapping[Math.round(i/6)]);                    
+                      for (let j = 0; j < 6; j ++)
+                        colors.push( color.r, color.g, color.b );
+                  
+              }
 
-            const positionAttribute = geometry.getAttribute( 'position' );
+              geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
 
-            const color = new THREE.Color();
-            let colors = [];
+              for (let i = 0; i < size**3; i++) {
+                const cube = new THREE.Mesh( geometry, material );
+                const lines = new THREE.LineSegments(edge, linemat);
+                cube.add(lines);
+                const x = Math.floor(i/9);
+                const y = Math.floor((i-x*9)/3);
+                const z = Math.floor(i-x*9-y*3);
+                //console.log(x,y,z);
+                cube.translateX(x-1);
+                cube.translateY(y-1);
+                cube.translateZ(z-1);
+                temp.push(cube);
+                scene.add(cube);
+              }
+              return temp;
+           }
 
-            for ( let i = 0; i < positionAttribute.count; i += 6 ) {
-        
-                    color.set(color_mapping[Math.round(i/6)]);
-                    
-                    // define the same color for each vertex of a triangle
-                    
-                    for (let j = 0; j < 6; j ++)
-                      colors.push( color.r, color.g, color.b );
-                
-            }
-
-            geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
-
-            //pivots for rotation of individual segments
-            var pivots = [];
-            for (let i = 0; i < 9; i++) {
-              pivots.push(new THREE.Group()); //0-2 for x, 3-5 for y, 6-8 for z
-              scene.add(pivots[i]);
-            }
-
-
-            for (let i = 0; i < 27; i++) {
-              const cube = new THREE.Mesh( geometry, material );
-              const lines = new THREE.LineSegments(edge, linemat);
-              cube.add(lines);
-              const x = Math.floor(i/9);
-              const y = Math.floor((i-x*9)/3);
-              const z = Math.floor(i-x*9-y*3);
-              //console.log(x,y,z);
-              cube.translateX(x-1);
-              cube.translateY(y-1);
-              cube.translateZ(z-1);
-              cubes.push(cube);
-              scene.add(cube);
-              //pivots[x].add(cubes[i]);
-              //pivots[3+y].add(cubes[i]);
-              //pivots[6+z].add(cubes[i]);
-            }
-
-            cubes.map((cube) => {
-              scene.add(cube);
-              //console.log(cube.position.x);
-              //console.log(pivots[cube.position.x+1]);
-              pivots[cube.position.x+1].add(cube);
-              pivots[cube.position.y+4].add(cube);
-              pivots[cube.position.z+7].add(cube);
-            });
-
+            let cubes = init_cubes();
             camera.position.z = 10;
-            //camera.rotation.x += 1.5;
             camera.position.x -= 1;
             camera.position.y -= 2;
 
             //controls.update() must be called after any manual changes to the camera's transform
             //camera.position.set( 0, 20, 100 );
 
-            //pivots.map((p) => {console.log(p);});
-
-            var global_pivot = new THREE.Group(); //pivot as a center point for rotating cubes. I'll need a lot of pivots for each block of cubes.
+            let global_pivot = new THREE.Group(); //pivot as a center point for rotating cubes. I'll need a lot of pivots for each block of cubes.
+            let camera_pivot = new THREE.Group(); //for camera rotation
+            //let non_rotating_pivot = new THREE.Group(); //for assigning cubes when rotating parts of cube.
+            let rotating_cubes = new THREE.Group();
+            scene.add(camera_pivot);
+            //scene.add(non_rotating_pivot);
             scene.add(global_pivot);
-            pivots.map((cube) => {global_pivot.add(cube);});
-            //pivots.map((p) => {console.log(p);});
-            //pivot.add( mesh );
-            //pivots[0].add(cubes[0]);
+            scene.add(rotating_cubes);
+            cubes.map((cube) => {global_pivot.add(cube);});
+            camera_pivot.add(camera);
 
             renderer.render( scene, camera );
 
@@ -217,23 +198,18 @@
             function animate() {
                 requestAnimationFrame( animate );
                 renderer.render( scene, camera );
-                global_pivot.rotation.y += 0.01;
-                global_pivot.rotation.x += 0.01;
-                global_pivot.rotation.z += 0.01;
-                //rotate();
-                /*
-                cubes.map((cube) => {
-                  cube.getWorldQuaternion(cube.rotation);
-                  cube.getWorldPosition(cube.position);
-                });
-                global_pivot.rotation.y -= 0.01;
-                global_pivot.rotation.x -= 0.01;
-                global_pivot.rotation.z -= 0.01;*/
-
-                //cubes.map((cube) => {cube.rotation.y += 0.01;});
-                //cube.rotation.z += 0.01;
+                if (is_solving && !is_rotating)
+                  going_backwards();
+                if (is_rotating)
+                  rotate(rotating_cubes, 0.05, cur_direction, cur_axis);
+                camera_pivot.rotation.x += 0.01;
+                camera_pivot.rotation.y += 0.01;
+                camera_pivot.rotation.z += 0.01;
             }
             animate();
+          }
+            
+          MainRubik();
         </script>
         <style>
           .body {
