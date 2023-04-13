@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Super tic-tac-toe</title>
+    </head>
+    <body id="main_field" class="body">
+        <canvas id="field" width="2000" height="1500" style="position: absolute; z-index:1; isolation:isolate;"></canvas>
+        <canvas id="upper" width="2000" height="1500" style="position: absolute; z-index:2; isolation:isolate;"></canvas>
+        <script type="module">
+            import * as Field from "./assets/scripts/super_tic_tac_toe.js";
+            import * as Controller from "./assets/scripts/board_logic_controller.js";
+            let assets_path = [['image','./assets/TicTacToe/sprites/tictacassets.png'],
+                               ['audio', './assets/TicTacToe/audio/move.wav'],
+                               ['audio', './assets/TicTacToe/audio/fill_board.wav'],
+                               ['audio', './assets/TicTacToe/audio/win.wav'],
+                               ['audio', './assets/TicTacToe/audio/opp_fill_board.wav'],
+                               ['audio', './assets/TicTacToe/audio/lose.wav']] //`D:\\ImTryingToLearn\\Snek\\assets\\TicTacToe\\sprites\\tictacassets.png`
+            //let sprites = new Image();
+
+            //pre-load assets here and call function from super_tic_tac_toe
+            const squares_amount = 9;
+
+            const loadAsset = (src) => 
+                new Promise ((resolve, reject) => {
+                    let content = null;
+                    if (src[0] == 'image') {
+                        content = new Image();
+                        content.onload = () => {console.log(`win ${src}`); resolve(content)};
+                        }
+                    else if (src[0] == 'audio') {
+                        content = new Audio();
+                        content.oncanplaythrough = () => {console.log(`win ${src}`); resolve(content)};
+                        }
+                    else {
+                            console.log(`unimplemented asset: ${asset}`);
+                            reject;
+                         }
+                    //if (src[0] == 'audio')
+                    //    content.load();canplaythrough
+                    //content.onload = () => {console.log(`win ${src}`); resolve(content)};
+                    content.onerror = () => {console.log(`fail ${src}`); reject;}
+                    content.src = src[1];
+                });
+            
+            Promise.all(assets_path.map(loadAsset)).then((loaded_asset) => {
+                console.log('are we here?')
+                let cur_player = 1;
+                let my_move = true;
+                let game_over = false;
+                //loaded_asset[0] is image with sprites.
+                //loaded_asset[1] will likely be audio.
+                let board = new Controller.BoardController(squares_amount, "upper", loaded_asset);
+                Field.initField("field", "upper", "main_field", loaded_asset[0]);
+                Field.drawAvailNodes("field", loaded_asset[0], board.avail_nodes);
+                
+                document.getElementById("upper").addEventListener('click', function(event) 
+                    {
+                        if (my_move) {
+                            let move_done = Field.player_move(event, "upper", loaded_asset[0], loaded_asset[1], cur_player, board.avail_nodes);
+                        if (move_done) {
+                            my_move = false;
+                            board.update_board(move_done[0], move_done[1], loaded_asset[2], cur_player);
+                            cur_player = 3 - cur_player;
+                            if (board.board_state['winner'] != -1) {
+                                event.stopPropagation();
+                                setTimeout(() => {alert(`${board.board_state['winner'] == 1? 'Player' : 'AI'} won!`); loaded_asset[3].play();}, 100);
+                            }
+                            else {
+                                Field.drawAvailNodes("field", loaded_asset[0], board.avail_nodes);
+                                setTimeout(() => {
+                                    let ai_move = board.aiMove();
+                                    Field.drawMove("upper", loaded_asset[0], loaded_asset[1], ai_move[0], ai_move[1], cur_player);
+                                    board.update_board(ai_move[0], ai_move[1], loaded_asset[4], cur_player);
+                                    cur_player = 3 - cur_player;
+                                    if (board.board_state['winner'] != -1) {
+                                        event.stopPropagation();
+                                        setTimeout(() => {alert(`${board.board_state['winner'] == 1? 'Player' : 'AI'} won!`); loaded_asset[5].play();}, 100);
+                                    }
+                                    else {
+                                        Field.drawAvailNodes("field", loaded_asset[0], board.avail_nodes);
+                                        my_move = true;
+                                        }
+                                    }, 1000);
+                                }
+                            }
+                        }
+                    });
+            });
+
+        </script>
+
+        <style>
+            .body {
+                background: linear-gradient(#549944, #668888);
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                margin: 0;
+                height: 100%;
+                overflow: hidden;
+                 }
+        </style>
+
+    </body>
+</html>
