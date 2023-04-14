@@ -28,11 +28,11 @@
                     let content = null;
                     if (src[0] == 'image') {
                         content = new Image();
-                        content.onload = () => {console.log(`loaded ${src}`); document.getElementById('loadBar').style.width += Math.floor(100/assets_path.length) + '%'; resolve(content)};
+                        content.onload = () => {if (document.getElementById('loadBar')){console.log(`loaded ${src}`); document.getElementById('loadBar').style.width += Math.floor(100/assets_path.length) + '%'; resolve(content);}};
                         }
                     else if (src[0] == 'audio') {
                         content = new Audio();
-                        content.oncanplaythrough = () => {console.log(`loaded ${src}`); document.getElementById('loadBar').style.width += Math.floor(100/assets_path.length) + '%'; resolve(content)};
+                        content.oncanplaythrough = () => {if (document.getElementById('loadBar')) {console.log(`loaded ${src}`); document.getElementById('loadBar').style.width += Math.floor(100/assets_path.length) + '%'; resolve(content);}};
                         }
                     else {
                             console.log(`unimplemented asset: ${asset}`);
