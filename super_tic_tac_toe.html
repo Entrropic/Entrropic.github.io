@@ -4,6 +4,9 @@
         <title>Super tic-tac-toe</title>
     </head>
     <body id="main_field" class="body">
+        <div id="wholeBar" style="background-color: #333333; border-radius:30px; position:absolute;width:600px;height:100px; top: 50%; left: 50%; margin-top:-50px;margin-left:-300px;">
+            <div id="loadBar" style="background-color: #3355aa; border-radius:30px; line-height:inherit; height:100%;"></div>
+        </div>
         <canvas id="field" width="2000" height="1500" style="position: absolute; z-index:1; isolation:isolate;"></canvas>
         <canvas id="upper" width="2000" height="1500" style="position: absolute; z-index:2; isolation:isolate;"></canvas>
         <script type="module">
@@ -14,8 +17,8 @@
                                ['audio', './assets/TicTacToe/audio/fill_board.wav'],
                                ['audio', './assets/TicTacToe/audio/win.wav'],
                                ['audio', './assets/TicTacToe/audio/opp_fill_board.wav'],
-                               ['audio', './assets/TicTacToe/audio/lose.wav']] //`D:\\ImTryingToLearn\\Snek\\assets\\TicTacToe\\sprites\\tictacassets.png`
-            //let sprites = new Image();
+                               ['audio', './assets/TicTacToe/audio/lose.wav']]
+            //todo: add proper AI, make menu and some options, make custom alerts/info msgs.
 
             //pre-load assets here and call function from super_tic_tac_toe
             const squares_amount = 9;
@@ -25,11 +28,11 @@
                     let content = null;
                     if (src[0] == 'image') {
                         content = new Image();
-                        content.onload = () => {console.log(`win ${src}`); resolve(content)};
+                        content.onload = () => {console.log(`loaded ${src}`); document.getElementById('loadBar').style.width += Math.floor(100/assets_path.length) + '%'; resolve(content)};
                         }
                     else if (src[0] == 'audio') {
                         content = new Audio();
-                        content.oncanplaythrough = () => {console.log(`win ${src}`); resolve(content)};
+                        content.oncanplaythrough = () => {console.log(`loaded ${src}`); document.getElementById('loadBar').style.width += Math.floor(100/assets_path.length) + '%'; resolve(content)};
                         }
                     else {
                             console.log(`unimplemented asset: ${asset}`);
@@ -38,17 +41,16 @@
                     //if (src[0] == 'audio')
                     //    content.load();canplaythrough
                     //content.onload = () => {console.log(`win ${src}`); resolve(content)};
-                    content.onerror = () => {console.log(`fail ${src}`); reject;}
+                    content.onerror = () => {console.log(`failed to load ${src}`); reject;}
                     content.src = src[1];
                 });
             
             Promise.all(assets_path.map(loadAsset)).then((loaded_asset) => {
+                document.getElementById("wholeBar").remove();
                 console.log('are we here?')
                 let cur_player = 1;
                 let my_move = true;
                 let game_over = false;
-                //loaded_asset[0] is image with sprites.
-                //loaded_asset[1] will likely be audio.
                 let board = new Controller.BoardController(squares_amount, "upper", loaded_asset);
                 Field.initField("field", "upper", "main_field", loaded_asset[0]);
                 Field.drawAvailNodes("field", loaded_asset[0], board.avail_nodes);
