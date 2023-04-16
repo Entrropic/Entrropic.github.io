@@ -1,7 +1,7 @@
 //initializing board and other useful functions.
-const square_size = 60;
-const top_margin = 150;
-const left_margin = 350;
+const square_size = Math.min(Math.floor(window.screen.width/15), Math.floor(window.screen.height/15));
+const top_margin = Math.floor(window.screen.height/10);
+const left_margin = Math.floor(window.screen.width/4);
 const squares_amount = 9;
 
 export function initField(canvas_id, upper_canvas_id, body_id, assets) {
