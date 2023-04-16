@@ -48,11 +48,7 @@
             document.getElementById("upper").width = window.screen.width;
             document.getElementById("field").height = window.screen.height;
             document.getElementById("upper").height = window.screen.height;
-            document.getElementById('easyAI').addEventListener('click', () => {changeDifficulty('easyAI');});
-            document.getElementById('hardAI').addEventListener('click', () => {changeDifficulty('hardAI');});
-            document.getElementById('startbtn').addEventListener('click', () => {startGame(assets);});
-            document.getElementById("aboutbtn").addEventListener('click', () => {messageBox('Inspired by <a href=https://www.codingame.com/ide/puzzle/tic-tac-toe><b>Tic-tac-toe<b></a> on codingame.com.\nYou play on a large grid which consists of nine smaller 3x3 grids. You fill the large grid by winning smaller grids. The move you make on small board determines which of boards on large grid is available for the following move.\nObjective is to win the large grid.');});
-
+        
             function messageBox(text, reset = false) {
                 const blurbg = document.createElement("div");
                 blurbg.classList.add("msgboxbg");
@@ -131,6 +127,11 @@
                 document.getElementById("wholeBar").remove();
                 document.getElementById('menu').display='block';
                 assets = loaded_asset;
+                document.getElementById('easyAI').addEventListener('click', () => {changeDifficulty('easyAI'); assets[1].play();});
+                document.getElementById('hardAI').addEventListener('click', () => {changeDifficulty('hardAI'); assets[1].play();});
+                document.getElementById('startbtn').addEventListener('click', () => {startGame(assets); assets[1].play();});
+                document.getElementById("aboutbtn").addEventListener('click', () => {messageBox('Inspired by <a href=https://www.codingame.com/ide/puzzle/tic-tac-toe><b>Tic-tac-toe<b></a> on codingame.com.\nYou play on a large grid which consists of nine smaller 3x3 grids. You fill the large grid by winning smaller grids. The move you make on small board determines which of boards on large grid is available for the following move.\nObjective is to win the large grid.'); assets[1].play();});
+
             });
             
             //Promise.all(assets_path.map(loadAsset)).then((loaded_asset) => {
