@@ -51,7 +51,7 @@
             document.getElementById('easyAI').addEventListener('click', () => {changeDifficulty('easyAI');});
             document.getElementById('hardAI').addEventListener('click', () => {changeDifficulty('hardAI');});
             document.getElementById('startbtn').addEventListener('click', () => {startGame(assets);});
-            document.getElementById("aboutbtn").addEventListener('click', () => {messageBox('Inspired by <a href=https://www.codingame.com/ide/puzzle/tic-tac-toe><b>Tic-tac-toe<b></a> on codingame.com.\nYou play on a large grid which consists of nine smaller 3x3 grids.\nYou fill the large grid by winning smaller grids\nThe move you make on small board determines which of boards on large grid is available for the following move.\nObjective is to win the large grid.');});
+            document.getElementById("aboutbtn").addEventListener('click', () => {messageBox('Inspired by <a href=https://www.codingame.com/ide/puzzle/tic-tac-toe><b>Tic-tac-toe<b></a> on codingame.com.\nYou play on a large grid which consists of nine smaller 3x3 grids. You fill the large grid by winning smaller grids.\nThe move you make on small board determines which of boards on large grid is available for the following move.\nObjective is to win the large grid.');});
 
             function messageBox(text, reset = false) {
                 const blurbg = document.createElement("div");
@@ -247,7 +247,7 @@
                 border-radius: 30px;
                 width: 50rem;
                 min-height: 30rem;
-                margin-top: calc(15% - 15rem);
+                margin-top: calc(11% - 15rem);
                 margin-left: calc(50% - 25rem);
                 background: linear-gradient(#bbbb78, #78bbbb);
                 box-shadow: 0px 0px 2rem #000000;
