@@ -1,0 +1,13 @@
+{
+	"start" : {"start" : "Welcome. You move with arrow keys. Your goal is to reach the E sign (E stands for exit). Stick to the light sources, for the darkness is dangerous and deadly."},
+	"3" : {
+		"9" : "While darkness is dangerous, you can survive on it for one move with your small personal light source. But overstay your welcome, and dark sources will destroy you.",
+		"12" : "It is worth noting that lightposts shine at 3 tile radius, and light is determined by manhattan distance. Also, walls and closed doors block light spread."
+	},
+	"8" : {
+		"15" : "This here will overcharge your light source for 10 moves if you bump it. It will also allow you to shine in 2 tile radius for 5 moves, and 1 tile radius for remaining 5 moves. Do note that these things only work 5 times."
+	},
+	"9" : {
+		"3" : "Closed doors act as walls, opened doors are passable. The red sphere thing is a door switch - it toggles all doors in 5 tile radius (yet again, manhattan distance). It only works when under light, though."
+	}
+}

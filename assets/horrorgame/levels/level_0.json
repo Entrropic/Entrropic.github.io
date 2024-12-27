@@ -105,9 +105,15 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":5,
+ "nextlayerid":7,
  "nextobjectid":1,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"dialog",
+         "type":"file",
+         "value":"dialog_0.json"
+        }],
  "renderorder":"right-down",
  "tiledversion":"1.11.0",
  "tileheight":70,
